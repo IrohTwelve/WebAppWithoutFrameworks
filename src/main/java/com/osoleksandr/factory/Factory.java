@@ -1,7 +1,6 @@
 package com.osoleksandr.factory;
 
-import com.osoleksandr.controller.GetAllCategoriesController;
-import com.osoleksandr.controller.UserController;
+import com.osoleksandr.controller.*;
 import com.osoleksandr.dao.CategoryDao;
 import com.osoleksandr.dao.CategoryDaoImpl;
 import com.osoleksandr.dao.UserDaoImpl;
@@ -9,11 +8,15 @@ import com.osoleksandr.service.CategoryService;
 import com.osoleksandr.service.CategoryServiceImpl;
 import com.osoleksandr.service.UserService;
 import com.osoleksandr.service.UserServiceImpl;
+import com.osoleksandr.servlet.ViewModel;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class Factory {
+
+    private static ViewModel vm = new ViewModel();
+    private static Controller userNotFoundController;
 
     public static Connection getConnection() {
         Connection connection = null;
@@ -26,8 +29,9 @@ public class Factory {
         return connection;
     }
 
-    public static UserController getUserController() {
-        return new UserController(Factory.getUserService());
+    //User
+    public static GetUserController getUserController() {
+        return new GetUserController(Factory.getUserService(), Factory.getCategoriesService());
     }
 
     private static UserService getUserService() {
@@ -38,6 +42,7 @@ public class Factory {
         return new UserDaoImpl(Factory.getConnection());
     }
 
+    //Categories
     public static CategoryService getCategoriesService() {
         return new CategoryServiceImpl(Factory.getCategoryDAO());
     }
@@ -56,5 +61,34 @@ public class Factory {
 
     public static GetAllCategoriesController getAllCategoriesController() {
         return new GetAllCategoriesController(Factory.getCategoryService());
+    }
+
+    //views
+    public static ViewModel getViewModel() {
+        return vm;
+    }
+
+    public static Controller getHomeController() {
+        return new HomePageController();
+    }
+
+    public static Controller getLoginController() {
+        return new LoginPageController();
+    }
+
+    public static Controller getProfileController() {
+        return new ProfilePageController();
+    }
+
+    public static Controller getRegistrationController() {
+        return new RegistrationPageController();
+    }
+
+    public static CreateUserController getCreateUserController() {
+        return new CreateUserController(Factory.getUserService(), Factory.getCategoriesService());
+    }
+
+    public static Controller getUserNotFoundController() {
+        return new UserNotFoundPageController();
     }
 }

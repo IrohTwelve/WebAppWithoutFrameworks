@@ -10,12 +10,12 @@ import com.osoleksandr.servlet.ViewModel;
 
 import javax.servlet.http.Cookie;
 
-public class CreateUserController implements Controller {
+public class GetUserController implements Controller {
 
     private UserService userService;
     private CategoryService categoryService;
 
-    public CreateUserController(UserService userService, CategoryService categoryService) {
+    public GetUserController(UserService userService, CategoryService categoryService) {
         this.userService = userService;
         this.categoryService = categoryService;
     }
@@ -24,18 +24,22 @@ public class CreateUserController implements Controller {
     public ViewModel process(Request request) {
         ViewModel vm = Factory.getViewModel();
         String userName = (String) vm.getAttribute("userName");
-        String password = (String) vm.getAttribute("password");
-        String email = (String) vm.getAttribute("email");
-        String token = userName + System.nanoTime();
-        User user = new User(null, userName, password, email, token, null);
-        userService.create(user);
-        vm.setAttribute("user", user);
-        vm.setCookie(new Cookie("token", user.getToken()));
-        if (user.getRoles().contains(Roles.ADMIN)) {
-            vm.setView("admin");
+        String pass = (String) vm.getAttribute("password");
+        User user = userService.findUser(userName, pass);
+        if (user != null) {
+            vm.setAttribute("user", user);
+            vm.setCookie(new Cookie("token", user.getToken()));
+            if (user.getRoles().contains(Roles.ADMIN)) {
+                vm.setView("admin");
+            } else {
+                vm.setView("profile");
+//                vm.setView("categories");
+//                vm.setAttribute("categories", categoryService.getAll());
+            }
         } else {
-            vm.setView("categories");
-            vm.setAttribute("categories", categoryService.getAll());
+            vm.setView("userNotFound");
+//            vm.setView("login");
+
         }
         return vm;
     }

@@ -1,6 +1,5 @@
 package com.osoleksandr.filter;
 
-import com.osoleksandr.dao.UserDao;
 import com.osoleksandr.dao.UserDaoImpl;
 import com.osoleksandr.factory.Factory;
 import com.osoleksandr.model.User;
@@ -21,7 +20,7 @@ public class UserFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         userDao = Factory.getUserDao();
-        protectedUrl.add("/root/userPage");
+        protectedUrl.add("/root/profile");
     }
 
     @Override
